@@ -7,18 +7,16 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public CameraMovement Movement;
-
+    public Road road;
     public Inputs inputs;
 
     private void Start()
     {
-        inputs.OnMouseClick += HandleMouseClick;
+        inputs.OnMouseClick += road.PlaceRoad;
+        inputs.OnMouseHold += road.PlaceRoad;
+        inputs.OnMouseUp += road.FinishPlacingRoad;
     }
 
-    private void HandleMouseClick(Vector3Int position)
-    {
-        Debug.Log(position);
-    }
 
     private void Update()
     {
