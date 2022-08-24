@@ -6,20 +6,57 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public CameraMovement Movement;
+    public CameraMovement cameraMovement;
     public Road road;
-    public Inputs inputs;
+    public Inputs input;
+    public UI ui;
+    public Structure structure;
 
     private void Start()
     {
-        inputs.OnMouseClick += road.PlaceRoad;
-        inputs.OnMouseHold += road.PlaceRoad;
-        inputs.OnMouseUp += road.FinishPlacingRoad;
+        ui.OnRoadPlacement += RoadPlacementHandler;
+        ui.OnHousePlacement += HousePlacementHandler;
+        ui.OnSpecialPlacement += SpecialPlacementHandler;
+        ui.OnBigStructurePlacement += BigStructurePlacementHandler;
+
     }
 
+    private void BigStructurePlacementHandler()
+    {
+        ClearInputActions();
+        input.OnMouseClick += structure.PlaceBigStructure;
+    }
+
+    private void SpecialPlacementHandler()
+    {
+        ClearInputActions();
+        input.OnMouseClick += structure.PlaceSpecial;
+    }
+
+    private void HousePlacementHandler()
+    {
+        ClearInputActions();
+        input.OnMouseClick += structure.PlaceHouse;
+    }
+
+    private void RoadPlacementHandler()
+    {
+        ClearInputActions();
+
+        input.OnMouseClick += road.PlaceRoad;
+        input.OnMouseHold += road.PlaceRoad;
+        input.OnMouseUp += road.FinishPlacingRoad;
+    }
+
+    private void ClearInputActions()
+    {
+        input.OnMouseClick = null;
+        input.OnMouseHold = null;
+        input.OnMouseUp = null;
+    }
 
     private void Update()
     {
-        Movement.MoveCamera(new Vector3(inputs.CameraMovementVector.x,0, inputs.CameraMovementVector.y));
+        cameraMovement.MoveCamera(new Vector3(input.CameraMovementVector.x, 0, input.CameraMovementVector.y));
     }
 }
