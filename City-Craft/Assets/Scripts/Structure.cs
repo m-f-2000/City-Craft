@@ -10,6 +10,7 @@ public class Structure : MonoBehaviour
     public StructurePrefabWeighted[] housesPrefabe, specialPrefabs, bigStructuresPrefabs;
     public Placement placementManager;
 
+
     private float[] houseWeights, specialWeights, bigStructureWeights;
 
     private void Start()
