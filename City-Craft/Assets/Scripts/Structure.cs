@@ -1,15 +1,14 @@
+﻿using Gp7;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Gp7;
 using System.Linq;
 using UnityEngine;
 
 public class Structure : MonoBehaviour
 {
     public StructurePrefabWeighted[] housesPrefabe, specialPrefabs, bigStructuresPrefabs;
-    public Placement placementManager;
-
+    public Placement placement;
 
     private float[] houseWeights, specialWeights, bigStructureWeights;
 
@@ -25,7 +24,7 @@ public class Structure : MonoBehaviour
         if (CheckPositionBeforePlacement(position))
         {
             int randomIndex = GetRandomWeightedIndex(houseWeights);
-            placementManager.PlaceObjectOnTheMap(position, housesPrefabe[randomIndex].prefab, CellType.Structure);
+            placement.PlaceObjectOnTheMap(position, housesPrefabe[randomIndex].prefab, CellType.Structure);
             AudioPlayer.instance.PlayPlacementSound();
         }
     }
@@ -34,10 +33,10 @@ public class Structure : MonoBehaviour
     {
         int width = 2;
         int height = 2;
-        if (CheckBigStructure(position, width, height))
+        if(CheckBigStructure(position, width , height))
         {
             int randomIndex = GetRandomWeightedIndex(bigStructureWeights);
-            placementManager.PlaceObjectOnTheMap(position, bigStructuresPrefabs[randomIndex].prefab, CellType.Structure, width, height);
+            placement.PlaceObjectOnTheMap(position, bigStructuresPrefabs[randomIndex].prefab, CellType.Structure, width, height);
             AudioPlayer.instance.PlayPlacementSound();
         }
     }
@@ -50,8 +49,8 @@ public class Structure : MonoBehaviour
             for (int z = 0; z < height; z++)
             {
                 var newPosition = position + new Vector3Int(x, 0, z);
-
-                if (DefaultCheck(newPosition) == false)
+                
+                if (DefaultCheck(newPosition)==false)
                 {
                     return false;
                 }
@@ -69,7 +68,7 @@ public class Structure : MonoBehaviour
         if (CheckPositionBeforePlacement(position))
         {
             int randomIndex = GetRandomWeightedIndex(specialWeights);
-            placementManager.PlaceObjectOnTheMap(position, specialPrefabs[randomIndex].prefab, CellType.Structure);
+            placement.PlaceObjectOnTheMap(position, specialPrefabs[randomIndex].prefab, CellType.SpecialStructure);
             AudioPlayer.instance.PlayPlacementSound();
         }
     }
@@ -87,7 +86,7 @@ public class Structure : MonoBehaviour
         for (int i = 0; i < weights.Length; i++)
         {
             //0->weihg[0] weight[0]->weight[1]
-            if (randomValue >= tempSum && randomValue < tempSum + weights[i])
+            if(randomValue >= tempSum && randomValue < tempSum + weights[i])
             {
                 return i;
             }
@@ -105,13 +104,13 @@ public class Structure : MonoBehaviour
 
         if (RoadCheck(position) == false)
             return false;
-
+        
         return true;
     }
 
     private bool RoadCheck(Vector3Int position)
     {
-        if (placementManager.GetNeighboursOfTypeFor(position, CellType.Road).Count <= 0)
+        if (placement.GetNeighboursOfTypeFor(position, CellType.Road).Count <= 0)
         {
             Debug.Log("Must be placed near a road");
             return false;
@@ -121,12 +120,12 @@ public class Structure : MonoBehaviour
 
     private bool DefaultCheck(Vector3Int position)
     {
-        if (placementManager.CheckIfPositionInBound(position) == false)
+        if (placement.CheckIfPositionInBound(position) == false)
         {
             Debug.Log("This position is out of bounds");
             return false;
         }
-        if (placementManager.CheckIfPositionIsFree(position) == false)
+        if (placement.CheckIfPositionIsFree(position) == false)
         {
             Debug.Log("This position is not EMPTY");
             return false;
@@ -139,6 +138,6 @@ public class Structure : MonoBehaviour
 public struct StructurePrefabWeighted
 {
     public GameObject prefab;
-    [Range(0, 1)]
+    [Range(0,1)]
     public float weight;
 }

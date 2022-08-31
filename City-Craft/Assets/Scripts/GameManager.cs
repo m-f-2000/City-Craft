@@ -1,62 +1,117 @@
-﻿using Gp7;
+﻿using City.AI;
+using Gp7;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class GameManager : MonoBehaviour
 {
     public CameraMovement cameraMovement;
     public Road road;
-    public Inputs input;
+    public Inputs inputs;
+
     public UI ui;
+
     public Structure structure;
 
-    private void Start()
+    public ObjectDetector objectDetector;
+
+    public PathVisualizer pathVisualizer;
+
+    void Start()
     {
         ui.OnRoadPlacement += RoadPlacementHandler;
         ui.OnHousePlacement += HousePlacementHandler;
         ui.OnSpecialPlacement += SpecialPlacementHandler;
-        ui.OnBigStructurePlacement += BigStructurePlacementHandler;
-
+        ui.OnBigStructurePlacement += BigStructurePlacement;
+        inputs.OnEscape += HandleEscape;
     }
 
-    private void BigStructurePlacementHandler()
+    private void HandleEscape()
     {
         ClearInputActions();
-        input.OnMouseClick += structure.PlaceBigStructure;
+        ui.ResetButtonColor();
+        pathVisualizer.ResetPath();
+        inputs.OnMouseClick += TrySelectingAgent;
+    }
+
+    private void TrySelectingAgent(Ray ray)
+    {
+        GameObject hitObject = objectDetector.RaycastAll(ray);
+        if(hitObject != null)
+        {
+            var agentScript = hitObject.GetComponent<AiAgent>();
+            agentScript?.ShowPath();
+        }
+    }
+
+    private void BigStructurePlacement()
+    {
+        ClearInputActions();
+
+        inputs.OnMouseClick += (pos) =>
+        {
+            ProcessInputAndCall(structure.PlaceBigStructure, pos);
+        };
+        inputs.OnEscape += HandleEscape;
     }
 
     private void SpecialPlacementHandler()
     {
         ClearInputActions();
-        input.OnMouseClick += structure.PlaceSpecial;
+
+        inputs.OnMouseClick += (pos) =>
+        {
+            ProcessInputAndCall(structure.PlaceSpecial, pos);
+        };
+        inputs.OnEscape += HandleEscape;
     }
 
     private void HousePlacementHandler()
     {
         ClearInputActions();
-        input.OnMouseClick += structure.PlaceHouse;
+
+        inputs.OnMouseClick += (pos) =>
+        {
+            ProcessInputAndCall(structure.PlaceHouse, pos);
+        };
+        inputs.OnEscape += HandleEscape;
     }
 
     private void RoadPlacementHandler()
     {
         ClearInputActions();
 
-        input.OnMouseClick += road.PlaceRoad;
-        input.OnMouseHold += road.PlaceRoad;
-        input.OnMouseUp += road.FinishPlacingRoad;
+        inputs.OnMouseClick += (pos) =>
+        {
+            ProcessInputAndCall(road.PlaceRoad, pos);
+        };
+        inputs.OnMouseUp += road.FinishPlacingRoad;
+        inputs.OnMouseHold += (pos) =>
+        {
+            ProcessInputAndCall(road.PlaceRoad, pos);
+        };
+        inputs.OnEscape += HandleEscape;
     }
 
     private void ClearInputActions()
     {
-        input.OnMouseClick = null;
-        input.OnMouseHold = null;
-        input.OnMouseUp = null;
+        inputs.ClearEvents();
     }
+
+    private void ProcessInputAndCall(Action<Vector3Int> callback, Ray ray)
+    {
+        Vector3Int? result = objectDetector.RaycastGround(ray);
+        if (result.HasValue)
+            callback.Invoke(result.Value);
+    }
+
+
 
     private void Update()
     {
-        cameraMovement.MoveCamera(new Vector3(input.CameraMovementVector.x, 0, input.CameraMovementVector.y));
+        cameraMovement.MoveCamera(new Vector3(inputs.CameraMovementVector.x, 0, inputs.CameraMovementVector.y));
     }
 }

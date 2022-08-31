@@ -7,8 +7,8 @@ namespace Gp7
 
     public class AudioPlayer : MonoBehaviour
     {
-        public AudioClip Sound;
-        public AudioSource Source;
+        public AudioClip placementSound;
+        public AudioSource audioSource;
 
         public static AudioPlayer instance;
 
@@ -23,9 +23,9 @@ namespace Gp7
 
         public void PlayPlacementSound()
         {
-            if(Sound != null)
+            if(placementSound != null)
             {
-                Source.PlayOneShot(Sound);
+                audioSource.PlayOneShot(placementSound);
             }
         }
     }

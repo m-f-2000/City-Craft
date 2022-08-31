@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Gp7;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Gp7;
 using UnityEngine;
 
 public class Road : MonoBehaviour
@@ -76,7 +76,7 @@ public class Road : MonoBehaviour
             var neighbours = placement.GetNeighboursOfTypeFor(temporaryPosition, CellType.Road);
             foreach (var roadposition in neighbours)
             {
-                if (roadPositionsToRecheck.Contains(roadposition) == false)
+                if (roadPositionsToRecheck.Contains(roadposition)==false)
                 {
                     roadPositionsToRecheck.Add(roadposition);
                 }

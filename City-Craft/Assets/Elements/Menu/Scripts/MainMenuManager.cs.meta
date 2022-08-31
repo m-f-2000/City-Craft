@@ -1,0 +1,36 @@
+fileFormatVersion: 2
+guid: 65787176dfd44cc489588b6ced91dacf
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - logo: {instanceID: 0}
+  - background: {instanceID: 0}
+  - buttons: {instanceID: 0}
+  - social1Icon: {instanceID: 0}
+  - social2Icon: {instanceID: 0}
+  - social3Icon: {instanceID: 0}
+  - uiClick: {instanceID: 0}
+  - uiHover: {instanceID: 0}
+  - uiSpecial: {instanceID: 0}
+  - homePanel: {instanceID: 0}
+  - settingsPanel: {instanceID: 0}
+  - bannerPanel: {instanceID: 0}
+  - social1Image: {instanceID: 0}
+  - social2Image: {instanceID: 0}
+  - social3Image: {instanceID: 0}
+  - logoImage: {instanceID: 0}
+  - backgroundImage: {instanceID: 0}
+  - fadeAnimator: {instanceID: 0}
+  - playText: {instanceID: 0}
+  - settingsText: {instanceID: 0}
+  - quitText: {instanceID: 0}
+  - versionText: {instanceID: 0}
+  - volumeSlider: {instanceID: 0}
+  - resolutionDropdown: {instanceID: 0}
+  - audioSource: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

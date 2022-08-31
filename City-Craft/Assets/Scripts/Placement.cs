@@ -33,6 +33,14 @@ public class Placement : MonoBehaviour
     internal void PlaceObjectOnTheMap(Vector3Int position, GameObject structurePrefab, CellType type, int width = 1, int height = 1)
     {
         StructureModel structure = CreateANewStructureModel(position, structurePrefab, type);
+
+        var structureNeedingRoad = structure.GetComponent<INeedingRoad>();
+        if (structureNeedingRoad != null)
+        {
+            structureNeedingRoad.RoadPosition = GetNearestRoad(position, width, height).Value;
+            Debug.Log("My nearest road position is: " + structureNeedingRoad.RoadPosition);
+        }
+
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
@@ -44,6 +52,23 @@ public class Placement : MonoBehaviour
             }
         }
 
+    }
+
+    private Vector3Int? GetNearestRoad(Vector3Int position, int width, int height)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                var newPosition = position + new Vector3Int(x, 0, y);
+                var roads = GetNeighboursOfTypeFor(newPosition, CellType.Road);
+                if (roads.Count > 0)
+                {
+                    return roads[0];
+                }
+            }
+        }
+        return null;
     }
 
     private void DestroyNatureAt(Vector3Int position)
@@ -88,14 +113,15 @@ public class Placement : MonoBehaviour
         GameObject structure = new GameObject(type.ToString());
         structure.transform.SetParent(transform);
         structure.transform.localPosition = position;
-        var structureModel = structure.AddComponent<StructureModel>();
+
+        StructureModel structureModel = structure.AddComponent<StructureModel>();
         structureModel.CreateModel(structurePrefab);
         return structureModel;
     }
 
-    internal List<Vector3Int> GetPathBetween(Vector3Int startPosition, Vector3Int endPosition)
+    internal List<Vector3Int> GetPathBetween(Vector3Int startPosition, Vector3Int endPosition, bool isAgent = false)
     {
-        var resultPath = GridSearch.AStarSearch(placementGrid, new Point(startPosition.x, startPosition.z), new Point(endPosition.x, endPosition.z));
+        var resultPath = GridSearch.AStarSearch(placementGrid, new Point(startPosition.x, startPosition.z), new Point(endPosition.x, endPosition.z), isAgent);
         List<Vector3Int> path = new List<Vector3Int>();
         foreach (Point point in resultPath)
         {
@@ -131,5 +157,64 @@ public class Placement : MonoBehaviour
             temporaryRoadobjects[position].SwapModel(newModel, rotation);
         else if (structureDictionary.ContainsKey(position))
             structureDictionary[position].SwapModel(newModel, rotation);
+    }
+
+    public StructureModel GetRandomRoad()
+    {
+        var point = placementGrid.GetRandomRoadPoint();
+        return GetStructureAt(point);
+    }
+
+    public StructureModel GetRandomSpecialStrucutre()
+    {
+        var point = placementGrid.GetRandomSpecialStructurePoint();
+        return GetStructureAt(point);
+    }
+
+    public StructureModel GetRandomHouseStructure()
+    {
+        var point = placementGrid.GetRandomHouseStructurePoint();
+        return GetStructureAt(point);
+    }
+
+    public List<StructureModel> GetAllHouses()
+    {
+        List<StructureModel> returnList = new List<StructureModel>();
+        var housePositions = placementGrid.GetAllHouses();
+        foreach (var point in housePositions)
+        {
+            returnList.Add(structureDictionary[new Vector3Int(point.X, 0, point.Y)]);
+        }
+        return returnList;
+    }
+
+    internal List<StructureModel> GetAllSpecialStructures()
+    {
+        List<StructureModel> returnList = new List<StructureModel>();
+        var housePositions = placementGrid.GetAllSpecialStructure();
+        foreach (var point in housePositions)
+        {
+            returnList.Add(structureDictionary[new Vector3Int(point.X, 0, point.Y)]);
+        }
+        return returnList;
+    }
+
+
+    private StructureModel GetStructureAt(Point point)
+    {
+        if (point != null)
+        {
+            return structureDictionary[new Vector3Int(point.X, 0, point.Y)];
+        }
+        return null;
+    }
+
+    public StructureModel GetStructureAt(Vector3Int position)
+    {
+        if (structureDictionary.ContainsKey(position))
+        {
+            return structureDictionary[position];
+        }
+        return null;
     }
 }

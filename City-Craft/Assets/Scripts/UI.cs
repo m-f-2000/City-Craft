@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,7 +53,7 @@ public class UI : MonoBehaviour
         outline.enabled = true;
     }
 
-    private void ResetButtonColor()
+    public void ResetButtonColor()
     {
         foreach (Button button in buttonList)
         {
