@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         Movement();
-        if (Input.GetKey(KeyCode.LeftShift) && Physics.Raycast(rb.transform.position, Vector3.down, 0.3f + 0.001f))
+        if (Input.GetKey(KeyCode.LeftShift) && Physics.Raycast(rb.transform.position, Vector3.down, 0.5f + 0.001f))
             rb.velocity = new Vector3(rb.velocity.x, 2.0f, rb.velocity.z);
     }
 
